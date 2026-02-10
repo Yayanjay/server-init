@@ -63,18 +63,20 @@ pm2 startup systemd -u $SUDO_USER --hp /home/$SUDO_USER || true
 # ---------- CADDY ----------
 echo "[9] Install Caddy"
 
-apt install -y debian-keyring debian-archive-keyring apt-transport-https
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
-  | gpg --dearmor -o /usr/share/keyrings/caddy-stable.gpg
+apt install -y gnupg apt-transport-https debian-keyring debian-archive-keyring
 
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
-  | tee /etc/apt/sources.list.d/caddy-stable.list
+mkdir -p /usr/share/keyrings
+
+curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/gpg.key \
+ | gpg --dearmor \
+ | tee /usr/share/keyrings/caddy-stable.gpg > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/caddy-stable.gpg] \
+https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main" \
+ > /etc/apt/sources.list.d/caddy-stable.list
 
 apt update
 apt install -y caddy
-
-systemctl enable caddy
-systemctl start caddy
 
 # ---------- FAIL2BAN ----------
 echo "[10] Enable fail2ban"
