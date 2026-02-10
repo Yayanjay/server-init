@@ -26,9 +26,9 @@ timedatectl set-timezone $TIMEZONE
 
 # ---------- FIREWALL ----------
 echo "[4] Setup firewall"
-ufw allow OpenSSH
-ufw allow 80
-ufw allow 443
+ufw allow 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
 ufw --force enable
 
 # ---------- SWAP ----------
